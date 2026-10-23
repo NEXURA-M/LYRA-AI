@@ -1,4 +1,4 @@
-name: Build and Deploy Secure Web
+name: Build and Securely Frame URL
 
 on:
   push:
@@ -12,26 +12,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Inject Secret URL Securely
+      - name: Inject and Obfuscate Secret URL
         env:
           SECRET_URL: ${{ secrets.URL }}
         run: |
-          # URL ko Base64 encode kar rahe hain taaki View Source (Ctrl+U) ya F12 mein direct plain text mein na dikhe
+          # URL ko Base64 mein encode karna taaki source code mein plain text na dikhe
           ENCODED_URL=$(echo -n "$SECRET_URL" | base64)
           
-          echo "Encoding and injecting URL..."
+          echo "Injecting encoded URL into index.html..."
           
-          # HTML ya JS file mein placeholder ko encoded string se replace karna
-          # Maan lijiye aapki file 'index.html' ya 'script.js' hai
+          # index.html ke placeholder ko encoded string se replace karna
           if [ -f "index.html" ]; then
             sed -i "s|__SECURE_URL_PLACEHOLDER__|${ENCODED_URL}|g" index.html
           fi
-          
-          if [ -f "script.js" ]; then
-            sed -i "s|__SECURE_URL_PLACEHOLDER__|${ENCODED_URL}|g" script.js
-          fi
 
-      - name: Deploy to GitHub Pages or Artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
