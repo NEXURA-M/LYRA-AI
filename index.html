@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure App</title>
+</head>
+<body>
+
+    <div id="content">Loading secure content...</div>
+<script>
+    // GitHub Actions build ke waqt yahan encoded string inject ho jayegi
+    const encodedUrl = "__SECURE_URL_PLACEHOLDER__";
+    
+    // Runtime par URL ko decode karna
+    const targetUrl = atob(encodedUrl);
+
+    // Dynamic iframe create karke URL ko frame karna
+    const iframe = document.createElement('iframe');
+    iframe.src = targetUrl;
+    iframe.style.width = "100%";
+    iframe.style.height = "100vh";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+</script>
+</body>
+</html>
