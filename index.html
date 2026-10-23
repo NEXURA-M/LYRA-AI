@@ -2,25 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Secure App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Framed View</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0d1117;
+            font-family: sans-serif;
+            color: #ffffff;
+        }
+        #loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="content">Loading secure content...</div>
-<script>
-    // GitHub Actions build ke waqt yahan encoded string inject ho jayegi
-    const encodedUrl = "__SECURE_URL_PLACEHOLDER__";
-    
-    // Runtime par URL ko decode karna
-    const targetUrl = atob(encodedUrl);
+    <div id="loader">Loading secure environment...</div>
 
-    // Dynamic iframe create karke URL ko frame karna
-    const iframe = document.createElement('iframe');
-    iframe.src = targetUrl;
-    iframe.style.width = "100%";
-    iframe.style.height = "100vh";
-    iframe.style.border = "none";
-    document.body.appendChild(iframe);
-</script>
+    <script>
+        // Yeh placeholder GitHub Actions build ke waqt Base64 string se replace ho jayega
+        const encodedUrl = "__SECURE_URL_PLACEHOLDER__";
+
+        window.addEventListener("DOMContentLoaded", () => {
+            try {
+                // Runtime par Base64 ko decode karke original URL hasil karna
+                const targetUrl = atob(encodedUrl);
+
+                // Dynamic iframe create karna taaki yeh DOM mein secretly load ho
+                const iframe = document.createElement('iframe');
+                iframe.src = targetUrl;
+                
+                iframe.onload = () => {
+                    document.getElementById('loader').style.display = 'none';
+                    iframe.style.display = 'block';
+                };
+
+                document.body.appendChild(iframe);
+            } catch (error) {
+                document.getElementById('loader').innerText = "Configuration Error: Unable to load secure target.";
+            }
+        });
+    </script>
 </body>
 </html>
